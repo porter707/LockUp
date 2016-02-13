@@ -17,9 +17,9 @@ import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
-public class Controller implements Initializable{
+public class InitialLaunchController implements Initializable{
 	
-	public Button AddFolder, RemoveFolder, ChangeKey, SetKey, GenerateKey, Back;
+	public Button GetStarted, SetKey, GenerateKey, AddFolder, Finish, Back;
 	public TextField Key;
 	public Label KeyStatus;
 
@@ -34,19 +34,19 @@ public class Controller implements Initializable{
 		Parent root = null;
 		boolean success = true;
 		
-		if (event.getSource() == ChangeKey){
-			stage = (Stage) ChangeKey.getScene().getWindow();
-			root = FXMLLoader.load(getClass().getResource("changeKey.fxml"));
-		}else if (event.getSource() == SetKey){
+		if (event.getSource() == GetStarted){
+			stage = (Stage) GetStarted.getScene().getWindow();
+			root = FXMLLoader.load(getClass().getResource("setKey.fxml"));
+		}else if(event.getSource() == SetKey){
 			if (SetKey() == true){
 				stage = (Stage) SetKey.getScene().getWindow();
-				root = FXMLLoader.load(getClass().getResource("main.fxml"));
+				root = FXMLLoader.load(getClass().getResource("addFolder.fxml"));
 			}else{
 				success = false;
 				KeyStatus.setText("Key doesn't meet the requirements");
 			}
-		}else if (event.getSource() == Back){
-			stage = (Stage) Back.getScene().getWindow();
+		}else if (event.getSource() == Finish){
+			stage = (Stage) Finish.getScene().getWindow();
 			root = FXMLLoader.load(getClass().getResource("main.fxml"));
 		}
 		if (success == true){
