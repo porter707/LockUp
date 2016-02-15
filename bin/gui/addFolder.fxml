@@ -28,7 +28,12 @@
             <Font size="15.0" />
          </font>
       </Button>
-      <Button fx:id="AddFolder" focusTraversable="false" layoutX="14.0" layoutY="304.0" mnemonicParsing="false" onAction="#selectFolder" prefHeight="47.0" prefWidth="116.0" text="Add Folder">
+      <Button focusTraversable="false" layoutX="14.0" layoutY="304.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="116.0" text="Back">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Button>
+      <Button fx:id="AddFolder" focusTraversable="false" layoutX="142.0" layoutY="304.0" mnemonicParsing="false" onAction="#selectFolder" prefHeight="47.0" prefWidth="116.0" text="Add Folder">
          <font>
             <Font size="15.0" />
          </font>

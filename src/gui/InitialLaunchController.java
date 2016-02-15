@@ -26,7 +26,6 @@ public class InitialLaunchController implements Initializable{
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		// TODO Auto-generated method stub
-		
 	}
 	
 	public void sceneChange(ActionEvent event) throws IOException{
@@ -69,8 +68,8 @@ public class InitialLaunchController implements Initializable{
 	public void selectFolder(ActionEvent event) throws IOException{
 		Stage stage = (Stage) AddFolder.getScene().getWindow();
 		DirectoryChooser chooser = new DirectoryChooser();
-		chooser.setTitle("JavaFX Projects");
-		//File defaultDirectory = new File("c:/dev/javafx");
+		//chooser.setTitle("Select a Folder");
+		//File defaultDirectory = new File(".");
 		//chooser.setInitialDirectory(defaultDirectory);
 		File selectedDirectory = chooser.showDialog(stage);
 		//System.out.println(selectedDirectory);

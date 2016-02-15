@@ -28,12 +28,17 @@
             <Font size="15.0" />
          </font>
       </Button>
-      <Button fx:id="GenerateKey" focusTraversable="false" layoutX="14.0" layoutY="304.0" mnemonicParsing="false" onAction="#generateKey" prefHeight="47.0" prefWidth="116.0" text="Generate key">
+      <Button fx:id="BackKey" focusTraversable="false" layoutX="14.0" layoutY="304.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="116.0" text="Back">
          <font>
             <Font size="15.0" />
          </font>
       </Button>
       <TextField fx:id="Key" alignment="CENTER" focusTraversable="false" layoutX="15.0" layoutY="226.0" prefHeight="27.0" prefWidth="372.0" promptText="Enter Key" />
       <Label fx:id="KeyStatus" layoutX="93.0" layoutY="200.0" textFill="#d90b0b" />
+      <Button fx:id="GenerateKey" focusTraversable="false" layoutX="143.0" layoutY="304.0" mnemonicParsing="false" onAction="#generateKey" prefHeight="47.0" prefWidth="116.0" text="Generate key">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Button>
    </children>
 </Pane>

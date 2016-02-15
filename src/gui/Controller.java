@@ -3,9 +3,12 @@ package gui;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import csp.SecurePassword;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -13,6 +16,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -22,11 +26,14 @@ public class Controller implements Initializable{
 	public Button AddFolder, RemoveFolder, ChangeKey, SetKey, GenerateKey, Back;
 	public TextField Key;
 	public Label KeyStatus;
+	public ListView<String> Folders, Files;
+    public List<String> FoldersList, FilesList;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		// TODO Auto-generated method stub
-		
+		//setFolderView();
+		//setFileView();
 	}
 	
 	public void sceneChange(ActionEvent event) throws IOException{
@@ -76,6 +83,22 @@ public class Controller implements Initializable{
 		//System.out.println(selectedDirectory);
 	}
 	public void removeFolder(){
+		
+	}
+	public void setFolderView(){
+        FoldersList = Arrays.asList("Mega", "Dropbox", "Google Drive");
+
+        Folders.setItems(FXCollections.observableList(FoldersList));
+	}
+	public void setFileView(){
+        FilesList = Arrays.asList("image01.jpg", "CV.doc", "Image-2.png");
+
+        Files.setItems(FXCollections.observableList(FilesList));
+	}
+	public void updateFolderView(){
+		
+	}
+	public void updateFileView(){
 		
 	}
 }
