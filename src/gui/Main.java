@@ -22,7 +22,7 @@ public class Main extends Application {
         	if (firstLaunch == true){
         		page = FXMLLoader.load(Main.class.getResource("welcome.fxml"));
         	}else{
-        		page = FXMLLoader.load(Main.class.getResource("main1.fxml"));
+        		page = FXMLLoader.load(Main.class.getResource("main.fxml"));
         	}
             Scene scene = new Scene(page);
             primaryStage.setScene(scene);
