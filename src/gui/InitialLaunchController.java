@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import csp.SecurePassword;
+import io.IO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -19,7 +20,7 @@ import javafx.stage.Stage;
 
 public class InitialLaunchController implements Initializable{
 	
-	public Button GetStarted, SetKey, GenerateKey, AddFolder, Finish, Back;
+	public Button GetStarted, SetKey, GenerateKey, AddFolder, Finish, KeyBack, FolderBack;
 	public TextField Key;
 	public Label KeyStatus;
 
@@ -47,6 +48,12 @@ public class InitialLaunchController implements Initializable{
 		}else if (event.getSource() == Finish){
 			stage = (Stage) Finish.getScene().getWindow();
 			root = FXMLLoader.load(getClass().getResource("main.fxml"));
+		}else if (event.getSource() == KeyBack){
+			stage = (Stage) KeyBack.getScene().getWindow();
+			root = FXMLLoader.load(getClass().getResource("welcome.fxml"));
+		}else if (event.getSource() == FolderBack){
+			stage = (Stage) FolderBack.getScene().getWindow();
+			root = FXMLLoader.load(getClass().getResource("setKey.fxml"));
 		}
 		if (success == true){
 			Scene scene = new Scene(root);
@@ -68,11 +75,9 @@ public class InitialLaunchController implements Initializable{
 	public void selectFolder(ActionEvent event) throws IOException{
 		Stage stage = (Stage) AddFolder.getScene().getWindow();
 		DirectoryChooser chooser = new DirectoryChooser();
-		//chooser.setTitle("Select a Folder");
-		//File defaultDirectory = new File(".");
-		//chooser.setInitialDirectory(defaultDirectory);
+		File defaultDirectory = new File(IO.getUserDataDirectory());
+		chooser.setInitialDirectory(defaultDirectory);
 		File selectedDirectory = chooser.showDialog(stage);
-		//System.out.println(selectedDirectory);
 	}
 	public void removeFolder(){
 		

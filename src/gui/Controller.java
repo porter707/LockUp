@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import csp.SecurePassword;
+import io.IO;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -76,28 +77,31 @@ public class Controller implements Initializable{
 	public void selectFolder(ActionEvent event) throws IOException{
 		Stage stage = (Stage) AddFolder.getScene().getWindow();
 		DirectoryChooser chooser = new DirectoryChooser();
-		chooser.setTitle("JavaFX Projects");
-		//File defaultDirectory = new File("c:/dev/javafx");
-		//chooser.setInitialDirectory(defaultDirectory);
+		File defaultDirectory = new File(IO.getUserDataDirectory());
+		chooser.setInitialDirectory(defaultDirectory);
 		File selectedDirectory = chooser.showDialog(stage);
-		//System.out.println(selectedDirectory);
 	}
+	
 	public void removeFolder(){
 		
 	}
+	
 	public void setFolderView(){
         FoldersList = Arrays.asList("Mega", "Dropbox", "Google Drive");
 
         Folders.setItems(FXCollections.observableList(FoldersList));
 	}
+	
 	public void setFileView(){
         FilesList = Arrays.asList("image01.jpg", "CV.doc", "Image-2.png");
 
         Files.setItems(FXCollections.observableList(FilesList));
 	}
+	
 	public void updateFolderView(){
 		
 	}
+	
 	public void updateFileView(){
 		
 	}
