@@ -3,9 +3,13 @@ package gui;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.InvalidPreferencesFormatException;
 
 import csp.SecurePassword;
+import db.Database;
 import io.IO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -23,13 +27,23 @@ public class InitialLaunchController implements Initializable{
 	public Button GetStarted, SetKey, GenerateKey, AddFolder, Finish, KeyBack, FolderBack;
 	public TextField Key;
 	public Label KeyStatus;
-
+	public Database db;
+	public boolean keyUpdate = false;
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		// TODO Auto-generated method stub
+		db = new Database();
+		try {
+			db.startDatabase();
+			db.createUserTable();
+			db.createFolderTable();
+			keyUpdate = db.getUserCount();
+		} catch (SQLException | IOException | BackingStoreException | InvalidPreferencesFormatException e) {
+			e.printStackTrace();
+		}
 	}
 	
-	public void sceneChange(ActionEvent event) throws IOException{
+	public void sceneChange(ActionEvent event) throws IOException, SQLException{
 		Stage stage = null;
 		Parent root = null;
 		boolean success = true;
@@ -49,6 +63,7 @@ public class InitialLaunchController implements Initializable{
 			stage = (Stage) Finish.getScene().getWindow();
 			root = FXMLLoader.load(getClass().getResource("main.fxml"));
 		}else if (event.getSource() == KeyBack){
+			keyUpdate = true;
 			stage = (Stage) KeyBack.getScene().getWindow();
 			root = FXMLLoader.load(getClass().getResource("welcome.fxml"));
 		}else if (event.getSource() == FolderBack){
@@ -65,19 +80,30 @@ public class InitialLaunchController implements Initializable{
 		String password = SecurePassword.SecureRandomAlphaNumericString();
 		Key.setText(password);
 	}
-	public boolean SetKey(){
+	public boolean SetKey() throws SQLException{
 		if (Key.getText().length() == 32){
+			if (keyUpdate == false){
+				db.addToUserTable(Key.getText());
+			}else{
+				db.updateUserTable(Key.getText());
+			}
 			return true;
 		}else{
 			return false;
 		}
 	}
-	public void selectFolder(ActionEvent event) throws IOException{
+	public void selectFolder(ActionEvent event) throws IOException, SQLException{
 		Stage stage = (Stage) AddFolder.getScene().getWindow();
 		DirectoryChooser chooser = new DirectoryChooser();
 		File defaultDirectory = new File(IO.getUserDataDirectory());
 		chooser.setInitialDirectory(defaultDirectory);
 		File selectedDirectory = chooser.showDialog(stage);
+		if (selectedDirectory != null){
+			boolean success = db.addFolderToTable(selectedDirectory.getAbsolutePath());
+			if (!success){
+				System.out.println("Failed to add");
+			}
+		}
 	}
 	public void removeFolder(){
 		

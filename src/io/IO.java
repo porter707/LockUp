@@ -12,7 +12,6 @@ public class IO {
 	public void initialSetup(){
 		File newFolder = new File(getUserDataDirectory() + File.separator + "LockUp");
 		boolean success = newFolder.mkdir();
-		System.out.println(success);
 		if (!success){
 			System.err.println("Failed to create LockUp user folder");
 		}

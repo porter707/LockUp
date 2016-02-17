@@ -32,8 +32,8 @@ public class LockUpPreferences {
         if (inputStream == null ) {
         	preferences = Preferences.userRoot().node("preferences");
         	setCredentials(SecurePassword.SecureRandomAlphaNumericString(), SecurePassword.SecureRandomAlphaNumericString());
-        	setFirstLaunch();
-			savePreferences();
+        	setFirstLaunch(true);
+        	savePreferences();
         } else {
         	Preferences.importPreferences(inputStream);
 			preferences = Preferences.userRoot().node("preferences");
@@ -45,8 +45,8 @@ public class LockUpPreferences {
     	preferences.put("db_password", password);
     }
     
-    public void setFirstLaunch(){
-    	preferences.putBoolean("first_launch", false);
+    public void setFirstLaunch(boolean firstLaunch){
+    	preferences.putBoolean("first_launch", firstLaunch);
     }
     
     public String getUsername() {
@@ -64,8 +64,5 @@ public class LockUpPreferences {
     public void savePreferences() throws IOException, BackingStoreException{
     	OutputStream outputStream = new FileOutputStream(parentFolder + "preferences.xml");
     	preferences.exportNode(outputStream);
-    }
-    public static void main(String args[]) throws IOException, BackingStoreException, InvalidPreferencesFormatException{
-    	LockUpPreferences lup = new LockUpPreferences();
     }
 }

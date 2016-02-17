@@ -2,11 +2,14 @@ package gui;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import io.IO;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import preferences.LockUpPreferences;
 
 public class Main extends Application {
 
@@ -18,7 +21,10 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         try {
         	Pane page;
-        	Boolean firstLaunch = true;
+    		IO io = new IO();
+    		io.initialSetup();
+        	LockUpPreferences pref = new LockUpPreferences();
+        	Boolean firstLaunch = pref.getFirstLaunch();
         	if (firstLaunch == true){
         		page = FXMLLoader.load(Main.class.getResource("welcome.fxml"));
         	}else{
