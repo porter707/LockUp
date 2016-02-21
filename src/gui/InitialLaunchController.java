@@ -21,12 +21,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import preferences.LockUpPreferences;
 
 public class InitialLaunchController implements Initializable{
 	
 	public Button GetStarted, SetKey, GenerateKey, AddFolder, Finish, KeyBack, FolderBack;
 	public TextField Key;
-	public Label KeyStatus;
+	public Label KeyStatus, folderAdded;
 	public Database db;
 	public boolean keyUpdate = false;
 	
@@ -43,7 +44,7 @@ public class InitialLaunchController implements Initializable{
 		}
 	}
 	
-	public void sceneChange(ActionEvent event) throws IOException, SQLException{
+	public void sceneChange(ActionEvent event) throws IOException, SQLException, BackingStoreException, InvalidPreferencesFormatException{
 		Stage stage = null;
 		Parent root = null;
 		boolean success = true;
@@ -60,6 +61,9 @@ public class InitialLaunchController implements Initializable{
 				KeyStatus.setText("Key doesn't meet the requirements");
 			}
 		}else if (event.getSource() == Finish){
+			LockUpPreferences pref = new LockUpPreferences();
+			pref.setFirstLaunch(false);
+			pref.savePreferences();
 			stage = (Stage) Finish.getScene().getWindow();
 			root = FXMLLoader.load(getClass().getResource("main.fxml"));
 		}else if (event.getSource() == KeyBack){
@@ -76,10 +80,12 @@ public class InitialLaunchController implements Initializable{
 			stage.show();
 		}
 	}
+	
 	public void generateKey(){
 		String password = SecurePassword.SecureRandomAlphaNumericString();
 		Key.setText(password);
 	}
+	
 	public boolean SetKey() throws SQLException{
 		if (Key.getText().length() == 32){
 			if (keyUpdate == false){
@@ -92,20 +98,23 @@ public class InitialLaunchController implements Initializable{
 			return false;
 		}
 	}
+	
 	public void selectFolder(ActionEvent event) throws IOException, SQLException{
+		folderAdded.setText(" ");
 		Stage stage = (Stage) AddFolder.getScene().getWindow();
 		DirectoryChooser chooser = new DirectoryChooser();
 		File defaultDirectory = new File(IO.getUserDataDirectory());
 		chooser.setInitialDirectory(defaultDirectory);
 		File selectedDirectory = chooser.showDialog(stage);
 		if (selectedDirectory != null){
-			boolean success = db.addFolderToTable(selectedDirectory.getAbsolutePath());
-			if (!success){
-				System.out.println("Failed to add");
+			boolean success = db.addFolderToTable(selectedDirectory.getName() + "Encrypted", 
+					selectedDirectory.getAbsolutePath(),
+					selectedDirectory.getName(),
+					IO.getLockUpDirectory() + selectedDirectory.getName());
+			if (success == true){
+				IO.newFolder(selectedDirectory.getName(), null);
+				IO.newFolder(selectedDirectory.getName() + "Encrypted", selectedDirectory.getAbsolutePath());
 			}
 		}
-	}
-	public void removeFolder(){
-		
 	}
 }

@@ -3,14 +3,20 @@ package gui;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.InvalidPreferencesFormatException;
 
 import csp.SecurePassword;
+import db.Database;
 import io.IO;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
@@ -19,6 +25,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
@@ -27,17 +34,37 @@ public class Controller implements Initializable{
 	public Button AddFolder, RemoveFolder, ChangeKey, SetKey, GenerateKey, Back;
 	public TextField Key;
 	public Label KeyStatus;
-	public ListView<String> Folders, Files;
+	public ObservableList<String> data;
+	public ListView<String> Folders = new ListView<String>();
+	public ListView<String> Files = new ListView<String>();
     public List<String> FoldersList, FilesList;
-
+    public Database db;
+    public boolean runOnce = false;
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		// TODO Auto-generated method stub
-		//setFolderView();
-		//setFileView();
+		db = new Database();
+		try {
+			db.startDatabase();
+			db.createUserTable();
+			db.createFolderTable();
+			setFolderView();
+			readFiles();
+		    Folders.setOnMouseClicked(new EventHandler<MouseEvent>() {
+		        @Override
+		        public void handle(MouseEvent event) {
+		            try {
+						setFileView(Folders.getSelectionModel().getSelectedItem());
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+		        }
+		    });
+		} catch (SQLException | IOException | BackingStoreException | InvalidPreferencesFormatException e) {
+			e.printStackTrace();
+		}
 	}
 	
-	public void sceneChange(ActionEvent event) throws IOException{
+	public void sceneChange(ActionEvent event) throws IOException, SQLException{
 		Stage stage = null;
 		Parent root = null;
 		boolean success = true;
@@ -67,39 +94,71 @@ public class Controller implements Initializable{
 		String password = SecurePassword.SecureRandomAlphaNumericString();
 		Key.setText(password);
 	}
-	public boolean SetKey(){
+	public boolean SetKey() throws SQLException{
 		if (Key.getText().length() == 32){
+			db.updateUserTable(Key.getText());
 			return true;
 		}else{
 			return false;
 		}
 	}
-	public void selectFolder(ActionEvent event) throws IOException{
+	
+	public void selectFolder(ActionEvent event) throws IOException, SQLException{
 		Stage stage = (Stage) AddFolder.getScene().getWindow();
 		DirectoryChooser chooser = new DirectoryChooser();
 		File defaultDirectory = new File(IO.getUserDataDirectory());
 		chooser.setInitialDirectory(defaultDirectory);
 		File selectedDirectory = chooser.showDialog(stage);
+		if (selectedDirectory != null){
+			boolean success = db.addFolderToTable(selectedDirectory.getName() + "Encrypted", 
+					selectedDirectory.getAbsolutePath(),
+					selectedDirectory.getName(),
+					IO.getLockUpDirectory() + selectedDirectory.getName());
+			if (success == true){
+				setFolderView();
+				System.out.println(selectedDirectory.getAbsolutePath());
+				IO.newFolder(selectedDirectory.getName(), null);
+				IO.newFolder(selectedDirectory.getName() + "Encrypted", selectedDirectory.getAbsolutePath());
+			}
+		}
 	}
 	
-	public void removeFolder(){
-		
+	public void removeFolder() throws SQLException{
+		String folder = Folders.getSelectionModel().getSelectedItem();
+		if (folder != null){
+			db.removeFolderFromTable(folder);
+			setFolderView();
+		}
 	}
 	
-	public void setFolderView(){
-        FoldersList = Arrays.asList("Mega", "Dropbox", "Google Drive");
-
-        Folders.setItems(FXCollections.observableList(FoldersList));
+	public void setFolderView() throws SQLException{
+		FoldersList = db.selectAllFolders();
+		data = FXCollections.observableArrayList();
+		data.addAll(FoldersList);
+		Folders.getItems().clear();
+		Folders.setItems(data);
 	}
 	
-	public void setFileView(){
-        FilesList = Arrays.asList("image01.jpg", "CV.doc", "Image-2.png");
-
-        Files.setItems(FXCollections.observableList(FilesList));
+	public void setFileView(String folder) throws SQLException{
+		FilesList = db.selectAllFiles(folder);
+		data = FXCollections.observableArrayList();
+		if (FilesList.size() != 0){
+			data.addAll(FilesList);
+		}else{
+			data.add("No Files in folder");
+		}
+		Files.getItems().clear();
+		Files.setItems(data);
 	}
 	
-	public void updateFolderView(){
-		
+	public void readFiles() throws SQLException{
+		ArrayList<File> DBFileList = new ArrayList<File>();
+		for (int i = 0; i < FoldersList.size(); i++){
+			IO.getAllFiles(FoldersList.get(i), DBFileList, 0);
+			for (int j = 0; j < DBFileList.size(); j++){
+				db.addFileToTable(FoldersList.get(i), DBFileList.get(j).getName(), DBFileList.get(j).getAbsolutePath(), "", "");
+			}
+		}
 	}
 	
 	public void updateFileView(){
