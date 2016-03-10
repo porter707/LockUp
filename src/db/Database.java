@@ -83,12 +83,24 @@ public class Database {
 		return folders;
 	}
 	
+	public List<String> selectFoldersToWatch() throws SQLException{
+		List<String> folders = new ArrayList<String>();
+		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Folders");
+        stmt.execute();
+	    ResultSet resultSet = stmt.getResultSet();
+	    while (resultSet.next()) {
+	    	folders.add(resultSet.getString(2) + "," + resultSet.getString(3) + "," + resultSet.getString(4) + "," + resultSet.getString(5));
+	    }
+	    stmt.close();
+		return folders;
+	}
+	
 	public boolean addFolderToTable(String folderName, String folderPath, String folderNameLockUp, String folderPathLockUp){		 
 		try {
 			PreparedStatement stmt = conn.prepareStatement("INSERT INTO Folders Values (NULL, '" + folderName + "','"+ folderPath +"', '" + folderNameLockUp + "','" + folderPathLockUp + "')");
 	        stmt.execute();
 	        stmt.close();
-	        createFileTable(folderNameLockUp);
+	        createFileTable(folderNameLockUp.replace(" ", "_"));
 		} catch (SQLException e) {
 			return false;
 		}
@@ -100,6 +112,9 @@ public class Database {
 		PreparedStatement stmt = conn.prepareStatement("DELETE FROM Folders WHERE FolderNameLockUp = '" + folder + "'");
         stmt.execute();
         stmt.close();
+		stmt = conn.prepareStatement("DROP TABLE " + folder.replace(" ", "_") + "Folder");
+        stmt.execute();
+        stmt.close();
 	}
 	
 	public void createFileTable(String table) throws SQLException{
@@ -107,15 +122,11 @@ public class Database {
 				"Folder (id int(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,"
 				+ "FileNameOriginal VARCHAR(255) NOT NULL UNIQUE,"
 				+ "FilePathOriginal VARCHAR(255) NOT NULL UNIQUE,"
-//				+ "FileMACOriginal timestamp????,"
-//				+ "FileHashOriginal VARCHAR(255) UNIQUE,"
 				+ "FileNameModified VARCHAR(255),"
-				+ "FilePathModified VARCHAR(255))"
+				+ "FilePathModified VARCHAR(255),"
+				+ "UpdateOriginal BOOLEAN,"
+				+ "UpdateModified BOOLEAN)"
 				);
-//				+ "FileMACModified timestamp????,"
-//				+ "FileHashModified VARCHAR(255) UNIQUE,"
-//				+ "UpdateOriginal boolean,"
-//				+ "UpdateModified boolean" );
         stmt.execute();
         stmt.close();
 	}
@@ -137,26 +148,51 @@ public class Database {
 		return folders;
 	}
 	
-	public void removeFileFromTable(String table, String file){
-		
+	public static String addFileToTable(String table, String fileNameOriginal, String filePathOriginal, Boolean UpdateOriginal, Boolean UpdateModified){
+		String sql = "INSERT INTO " + table + "Folder"
+			+ " (id, FileNameOriginal, FilePathOriginal, UpdateOriginal, UpdateModified) "
+			+ "VALUES (NULL, '"+fileNameOriginal+"', '"+filePathOriginal+"', '"+UpdateOriginal+"', '"+UpdateModified+"') "
+			+ "ON DUPLICATE KEY UPDATE "
+			+ "FileNameOriginal = '"+fileNameOriginal+"', FilePathOriginal = '"+filePathOriginal+"', UpdateOriginal = '"+UpdateOriginal+"', UpdateModified = '"+UpdateModified+"'";	
+		return sql;
 	}
 	
-	public void addFileToTable(String table, String fileNameOriginal, String filePathOriginal, String fileNameModified, String filePathModified) throws SQLException{
-		PreparedStatement stmt;
-		stmt = conn.prepareStatement("INSERT INTO " + table + "Folder"
-			+ " (id, FileNameOriginal, FilePathOriginal, FileNameModified, FilePathModified) "
-			+ "VALUES (NULL, '"+fileNameOriginal+"', '"+filePathOriginal+"', '"+fileNameModified+"', '"+filePathModified+"') "
+	public static String addFileToTableModified(String table, String fileNameModified, String filePathModified, Boolean UpdateOriginal, Boolean UpdateModified){
+		String sql = "INSERT INTO " + table + "Folder"
+			+ " (id, FileNameModified, FilePathModified, UpdateOriginal, UpdateModified) "
+			+ "VALUES (NULL, '"+fileNameModified+"', '"+filePathModified+"', '"+UpdateOriginal+"', '"+UpdateModified+"') "
 			+ "ON DUPLICATE KEY UPDATE "
-			+ "FileNameOriginal = '"+fileNameOriginal+"', FilePathOriginal = '"+filePathOriginal+"', FileNameModified = '"+fileNameModified+"', FilePathModified = '"+filePathModified+"'");		
+			+ "FileNameModified = '"+fileNameModified+"', FilePathModified = '"+filePathModified+"', UpdateOriginal = '"+UpdateOriginal+"', UpdateModified = '"+UpdateModified+"'";
+		return sql;
+	}
+	
+	public static String updateFileFromTable(String table, String file){
+		String sql = "UPDATE " + table + "Folder SET UpdateOriginal = 'true' WHERE FileNameOriginal = '"+ file +"'";
+		return sql;
+	}
+	
+	public static String updateFileFromTableModified(String table, String file){
+		String sql = "UPDATE " + table + "Folder SET UpdateModified = 'true' WHERE FileNameModified = '"+ file +"'";
+		return sql;
+	}
+	
+	public static String deleteFileFromTable(String table, String file){
+		String sql = "DELETE FROM " + table + "Folder WHERE FileNameOriginal = '" + file + "'";
+		return sql;
+	}
+	
+	public static String deleteFileFromTableModified(String table, String file){
+		String sql = "DELETE FROM " + table + "Folder WHERE FileNameModified = '" + file + "'";
+		return sql;
+	}
+	
+	public void runStatement(String sql) throws SQLException{
+		PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.execute();
         stmt.close();
 	}
-	
-	public void updateFileFromTable(String table, String file){
-		
-	}
 	public void closeDatabase() throws SQLException{
-		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM MEGAFolder");
+		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM MegaFolder");
 		stmt.execute();
         ResultSet resultSet = stmt.getResultSet();
         ResultSetMetaData rsmd = resultSet.getMetaData();
@@ -175,7 +211,7 @@ public class Database {
 	public static void main(String[] args) throws SQLException, IOException, BackingStoreException, InvalidPreferencesFormatException{
 		Database db = new Database();
 		db.startDatabase();
-		//db.closeDatabase();
-		db.selectAllFiles("MEGA");
+		db.closeDatabase();
+		//db.selectAllFiles("MEGA");
 	}
 }

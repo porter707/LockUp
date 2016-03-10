@@ -1,15 +1,21 @@
 package gui;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import db.Database;
 import io.IO;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import preferences.LockUpPreferences;
+import sync.folderWatch;
 
 public class Main extends Application {
 
@@ -22,6 +28,7 @@ public class Main extends Application {
         try {
         	Pane page;
     		IO io = new IO();
+    		Database db = new Database();
     		io.initialSetup();
         	LockUpPreferences pref = new LockUpPreferences();
         	Boolean firstLaunch = pref.getFirstLaunch();
@@ -34,9 +41,27 @@ public class Main extends Application {
             primaryStage.setScene(scene);
             primaryStage.setResizable(false);
             primaryStage.setTitle("LockUp");
+            db.startDatabase();
+            db.createUserTable();
+            db.createFolderTable();
+            List<String> resultSet = db.selectFoldersToWatch();
             primaryStage.show();
-        } catch (Exception ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            for(int i = 0; i < resultSet.size(); i++){
+            	String[] parts = resultSet.get(i).split(",");
+            	@SuppressWarnings("unused")
+				folderWatch fw1 = new folderWatch(parts[0], parts[1], parts[2].replace(" ", "_"));
+            	@SuppressWarnings("unused")
+				folderWatch fw2 = new folderWatch(parts[2], parts[3], parts[2].replace(" ", "_"));
+            }
+            primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent e) {
+                   Platform.exit();
+                   System.exit(0);
+                }
+             });
+        } catch (Exception e) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 }

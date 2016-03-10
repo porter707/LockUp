@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.prefs.BackingStoreException;
@@ -28,6 +27,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import sync.folderWatch;
 
 public class Controller implements Initializable{
 	
@@ -45,10 +45,7 @@ public class Controller implements Initializable{
 		db = new Database();
 		try {
 			db.startDatabase();
-			db.createUserTable();
-			db.createFolderTable();
 			setFolderView();
-			readFiles();
 		    Folders.setOnMouseClicked(new EventHandler<MouseEvent>() {
 		        @Override
 		        public void handle(MouseEvent event) {
@@ -103,22 +100,24 @@ public class Controller implements Initializable{
 		}
 	}
 	
-	public void selectFolder(ActionEvent event) throws IOException, SQLException{
+	public void selectFolder(ActionEvent event) throws SQLException{
 		Stage stage = (Stage) AddFolder.getScene().getWindow();
 		DirectoryChooser chooser = new DirectoryChooser();
 		File defaultDirectory = new File(IO.getUserDataDirectory());
 		chooser.setInitialDirectory(defaultDirectory);
 		File selectedDirectory = chooser.showDialog(stage);
 		if (selectedDirectory != null){
-			boolean success = db.addFolderToTable(selectedDirectory.getName() + "Encrypted", 
-					selectedDirectory.getAbsolutePath(),
-					selectedDirectory.getName(),
-					IO.getLockUpDirectory() + selectedDirectory.getName());
+			String folderName = selectedDirectory.getName() + "Encrypted";
+			String folderPath = selectedDirectory.getAbsolutePath() + "/" + selectedDirectory.getName() +"Encrypted";
+			String lockupName = selectedDirectory.getName();
+			String lockupPath = IO.getLockUpDirectory() + selectedDirectory.getName();
+			boolean success = db.addFolderToTable(folderName, folderPath, lockupName, lockupPath);
 			if (success == true){
 				setFolderView();
-				System.out.println(selectedDirectory.getAbsolutePath());
 				IO.newFolder(selectedDirectory.getName(), null);
 				IO.newFolder(selectedDirectory.getName() + "Encrypted", selectedDirectory.getAbsolutePath());
+				new folderWatch(folderName, folderPath, lockupName);
+				new folderWatch(lockupName, lockupPath, lockupName);
 			}
 		}
 	}
@@ -128,6 +127,7 @@ public class Controller implements Initializable{
 		if (folder != null){
 			db.removeFolderFromTable(folder);
 			setFolderView();
+			setFileView(null);
 		}
 	}
 	
@@ -140,28 +140,18 @@ public class Controller implements Initializable{
 	}
 	
 	public void setFileView(String folder) throws SQLException{
-		FilesList = db.selectAllFiles(folder);
-		data = FXCollections.observableArrayList();
-		if (FilesList.size() != 0){
-			data.addAll(FilesList);
-		}else{
-			data.add("No Files in folder");
-		}
-		Files.getItems().clear();
-		Files.setItems(data);
-	}
-	
-	public void readFiles() throws SQLException{
-		ArrayList<File> DBFileList = new ArrayList<File>();
-		for (int i = 0; i < FoldersList.size(); i++){
-			IO.getAllFiles(FoldersList.get(i), DBFileList, 0);
-			for (int j = 0; j < DBFileList.size(); j++){
-				db.addFileToTable(FoldersList.get(i), DBFileList.get(j).getName(), DBFileList.get(j).getAbsolutePath(), "", "");
+		if (folder != null){
+			FilesList = db.selectAllFiles(folder.replace(" ", "_"));
+			data = FXCollections.observableArrayList();
+			if (FilesList.size() != 0){
+				data.addAll(FilesList);
+			}else{
+				data.add("No Files in folder");
 			}
+			Files.getItems().clear();
+			Files.setItems(data);
+		}else{
+			Files.getItems().clear();
 		}
-	}
-	
-	public void updateFileView(){
-		
 	}
 }
