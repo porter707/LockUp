@@ -11,6 +11,8 @@ public class IO {
 	public void initialSetup(){
 		File newFolder = new File(getUserDataDirectory() + File.separator + "LockUp");
 		newFolder.mkdir();
+		newFolder = new File(getUserDataDirectory() + File.separator + "LockUp" + File.separator + "Vault");
+		newFolder.mkdir();
 	}
 	
 	public static String getUserDataDirectory() {
@@ -18,7 +20,7 @@ public class IO {
     }
 	
 	public static String getLockUpDirectory(){
-		return System.getProperty("user.home") + File.separator + "LockUp" + File.separator;
+		return System.getProperty("user.home") + File.separator + "LockUp" + File.separator + "Vault" + File.separator;
 	}
 	
 	public static void newFolder(String folder, String path){
@@ -31,10 +33,6 @@ public class IO {
 		if (!success){
 			System.err.println("Failed to create " + folder + " folder");
 		}
-	}
-	
-	public void removeFolder(String folder){
-		
 	}
 	
 	public static void getAllFiles(String folder, ArrayList<File> fileList, int i){
@@ -54,13 +52,4 @@ public class IO {
 			}
 		}
 	}
-	
-	public void getFile(String file){
-		
-	}
-	
-	public void getMacTime(String file){
-		
-	}
-
 }

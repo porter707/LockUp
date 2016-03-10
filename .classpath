@@ -4,5 +4,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
 	<classpathentry kind="lib" path="/Users/Porter/Documents/workspace/LockUp/libs/h2-1.4.191.jar"/>
+	<classpathentry kind="lib" path="/Users/Porter/Documents/workspace/LockUp/libs/bcprov-jdk15on-153.jar"/>
+	<classpathentry kind="lib" path="/Users/Porter/Documents/workspace/LockUp/libs/lz4-1.2.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
