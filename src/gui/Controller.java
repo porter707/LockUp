@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.prefs.BackingStoreException;
@@ -142,6 +143,7 @@ public class Controller implements Initializable{
 	public void setFileView(String folder) throws SQLException{
 		if (folder != null){
 			FilesList = db.selectAllFiles(folder.replace(" ", "_"));
+			FilesList.removeAll(Arrays.asList(""));
 			data = FXCollections.observableArrayList();
 			if (FilesList.size() != 0){
 				data.addAll(FilesList);

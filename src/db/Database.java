@@ -186,6 +186,16 @@ public class Database {
 		return sql;
 	}
 	
+	public static String deleteFolderFromTable(String table, String file){
+		String sql = "DELETE FROM " + table + "Folder WHERE filePathOriginal LIKE '%" + file + "%'";
+		return sql;
+	}
+	
+	public static String deleteFolderFromTableModified(String table, String file){
+		String sql = "DELETE FROM " + table + "Folder WHERE filePathModified LIKE '%" + file + "%'";
+		return sql;
+	}
+	
 	public void runStatement(String sql) throws SQLException{
 		PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.execute();

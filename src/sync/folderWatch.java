@@ -8,6 +8,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.InvalidPreferencesFormatException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import db.Database;
 
@@ -28,7 +30,7 @@ public class folderWatch {
                         	File file = new File(folderPath+"/"+filePath);
                         	if (file.isDirectory() && !watchedFolders.contains(folderPath+"/"+filePath)){
                         		new folderWatch(filePath, folderPath+"/"+filePath, table);
-                        	} else if (file.isFile()){
+                        	} else if (file.isFile() && !filePath.equals(".DS_Store")){
                         		if(folderPath.contains(table + "Encrypted".replace("_", " "))){
                         			runSql(Database.addFileToTableModified(table, filePath, folderPath+"/"+filePath, false, false));
                         		}else{
@@ -56,11 +58,23 @@ public class folderWatch {
                         
                         @Override
                         public void onFileDelete(String filePath) {
-                    		if(folderPath.contains(table + "Encrypted".replace("_", " "))){
-                    			runSql(Database.deleteFileFromTableModified(table, filePath));
-                    		}else{
-                    			runSql(Database.deleteFileFromTable(table, filePath));
-                    		}
+                        	Pattern pattern = Pattern.compile("(\\.[^.]+)$");
+                        	Matcher matcher = pattern.matcher(filePath);
+                        	if (matcher.find()){
+                        		if(folderPath.contains(table + "Encrypted".replace("_", " "))){
+                        			runSql(Database.deleteFileFromTableModified(table, filePath));
+                        		}else{
+                        			runSql(Database.deleteFileFromTable(table, filePath));
+                        		}
+                        	}else{
+                        		if(folderPath.contains(table + "Encrypted".replace("_", " "))){
+                        			
+                        			runSql(Database.deleteFolderFromTableModified(table, folderPath + "/" + filePath));
+                        		}else{
+                        			runSql(Database.deleteFolderFromTable(table, filePath));
+                        			System.out.println(Database.deleteFolderFromTable(table, folderPath + "/" + filePath));
+                        		}
+                        	}
                         	System.out.println("deleted " + folderPath + "/" + filePath);
                         }
                     },
@@ -74,6 +88,12 @@ public class folderWatch {
     		for (File file : files){
     			if (file.isDirectory()){
     				new folderWatch(file.getName().toString(),  file.toString(), table);
+    			}else if (file.isFile() && !file.getName().toString().equals(".DS_Store")){
+    				if(file.toString().contains(table + "Encrypted".replace("_", " "))){
+    					runSql(Database.addFileToTableModified(table, file.getName().toString(), file.toString(), false, true));
+    				} else {
+    					runSql(Database.addFileToTable(table, file.getName().toString(), file.toString(), false, true));
+    				}
     			}
     		}
         } catch (IOException e) {
