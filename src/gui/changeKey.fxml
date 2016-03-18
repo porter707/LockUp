@@ -11,31 +11,31 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.Controller">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" styleClass="background" stylesheets="@style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.Controller">
    <children>
-      <Label layoutX="14.0" layoutY="32.0" text="Change secure key!">
+      <Label id="title" layoutX="14.0" layoutY="32.0" text="Change secure key!">
          <font>
             <Font size="28.0" />
          </font>
       </Label>
-      <Label layoutX="15.0" layoutY="77.0" prefHeight="76.0" prefWidth="372.0" text="For LockUp to secure your files you need to set a secure key, this key needs to be 32 characters long. You can use your own key or click the generate key button below to generate a random key." textOverrun="CLIP" wrapText="true">
+      <Label id="text" layoutX="15.0" layoutY="77.0" prefHeight="76.0" prefWidth="372.0" text="For LockUp to secure your files you need to set a secure key, this key needs to be 32 characters long. You can use your own key or click the generate key button below to generate a random key." textOverrun="CLIP" wrapText="true">
          <font>
             <Font size="14.0" />
          </font>
       </Label>
-      <Button fx:id="SetKey" focusTraversable="false" layoutX="271.0" layoutY="304.0" mnemonicParsing="false" onAction="#sceneChange" prefHeight="47.0" prefWidth="116.0" text="Set Key!">
+      <Button id="button" fx:id="SetKey" focusTraversable="false" layoutX="271.0" layoutY="304.0" mnemonicParsing="false" onAction="#sceneChange" prefHeight="47.0" prefWidth="116.0" text="Set Key!">
          <font>
             <Font size="15.0" />
          </font>
       </Button>
-      <Button fx:id="GenerateKey" focusTraversable="false" layoutX="142.0" layoutY="304.0" mnemonicParsing="false" onAction="#generateKey" prefHeight="47.0" prefWidth="116.0" text="Generate key">
+      <Button id="button" fx:id="GenerateKey" focusTraversable="false" layoutX="142.0" layoutY="304.0" mnemonicParsing="false" onAction="#generateKey" prefHeight="47.0" prefWidth="116.0" text="Generate key">
          <font>
             <Font size="15.0" />
          </font>
       </Button>
       <TextField fx:id="Key" alignment="CENTER" focusTraversable="false" layoutX="15.0" layoutY="226.0" prefHeight="27.0" prefWidth="372.0" promptText="Enter Key" />
       <Label fx:id="KeyStatus" layoutX="93.0" layoutY="200.0" textFill="#d90b0b" />
-      <Button fx:id="Back" focusTraversable="false" layoutX="15.0" layoutY="304.0" mnemonicParsing="false" onAction="#sceneChange" prefHeight="47.0" prefWidth="116.0" text="Back">
+      <Button id="button" fx:id="Back" focusTraversable="false" layoutX="15.0" layoutY="304.0" mnemonicParsing="false" onAction="#sceneChange" prefHeight="47.0" prefWidth="116.0" text="Back">
          <font>
             <Font size="15.0" />
          </font>

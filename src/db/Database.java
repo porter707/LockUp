@@ -1,6 +1,13 @@
 package db;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +20,7 @@ import java.util.prefs.InvalidPreferencesFormatException;
 
 import org.h2.jdbcx.JdbcDataSource;
 
+import io.IO;
 import preferences.LockUpPreferences;
 
 public class Database {
@@ -22,6 +30,12 @@ public class Database {
 	public void startDatabase() throws SQLException, IOException, BackingStoreException, InvalidPreferencesFormatException{
 		JdbcDataSource ds = new JdbcDataSource();
 		LockUpPreferences pref = new LockUpPreferences();
+		File file = new File(IO.getUserDataDirectory() + File.separator + "LockUp" + File.separator + "LockUpDB" + File.separator + "LockUp.db.mv.db");
+		if(!file.exists()){
+			Path backup = Paths.get(IO.getUserDataDirectory() + File.separator + ".LockUpBackup" + File.separator + "LockUp.db.mv.db");
+			Path dest = Paths.get(IO.getUserDataDirectory() + File.separator + "LockUp" + File.separator + "LockUpDB" + File.separator + "LockUp.db.mv.db");
+			Files.copy(backup, dest);
+		}
 		ds.setURL("jdbc:h2:~/LockUp/LockUpDB/LockUp.db;mode=MySQL");
 		ds.setUser(pref.getUsername());
 		ds.setPassword(pref.getPassword());
@@ -78,6 +92,18 @@ public class Database {
 	        	String columnValue = resultSet.getString(i);
                 folders.add(columnValue);
 	        }
+	    }
+	    stmt.close();
+		return folders;
+	}
+	
+	public List<String> selectFolders() throws SQLException{
+		List<String> folders = new ArrayList<String>();
+		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Folders");
+        stmt.execute();
+	    ResultSet resultSet = stmt.getResultSet();
+	    while (resultSet.next()) {
+	    	folders.add(resultSet.getString(3) + "," + resultSet.getString(4));
 	    }
 	    stmt.close();
 		return folders;
@@ -148,6 +174,20 @@ public class Database {
 		return folders;
 	}
 	
+	public List<String> selectFiles(String folder) throws SQLException{
+		List<String> files = new ArrayList<String>();
+		PreparedStatement stmt = conn.prepareStatement("SELECT FilePathOriginal, FilePathModified, UpdateOriginal, UpdateModified FROM " + folder + "Folder");
+        stmt.execute();
+	    ResultSet resultSet = stmt.getResultSet();
+	    while (resultSet.next()) {
+	    	if (!resultSet.getString(3).equals("false") || !resultSet.getString(4).equals("false")){
+	    		files.add(resultSet.getString(1) + "," + resultSet.getString(2) + "," + resultSet.getString(3) + "," + resultSet.getString(4));
+	    	}
+	    }
+	    stmt.close();
+		return files;
+	}
+	
 	public static String addFileToTable(String table, String fileNameOriginal, String filePathOriginal, Boolean UpdateOriginal, Boolean UpdateModified){
 		String sql = "INSERT INTO " + table + "Folder"
 			+ " (id, FileNameOriginal, FilePathOriginal, UpdateOriginal, UpdateModified) "
@@ -158,11 +198,9 @@ public class Database {
 	}
 	
 	public static String addFileToTableModified(String table, String fileNameModified, String filePathModified, Boolean UpdateOriginal, Boolean UpdateModified){
-		String sql = "INSERT INTO " + table + "Folder"
-			+ " (id, FileNameModified, FilePathModified, UpdateOriginal, UpdateModified) "
-			+ "VALUES (NULL, '"+fileNameModified+"', '"+filePathModified+"', '"+UpdateOriginal+"', '"+UpdateModified+"') "
-			+ "ON DUPLICATE KEY UPDATE "
-			+ "FileNameModified = '"+fileNameModified+"', FilePathModified = '"+filePathModified+"', UpdateOriginal = '"+UpdateOriginal+"', UpdateModified = '"+UpdateModified+"'";
+		String sql = "UPDATE " + table + "Folder"
+			+ " SET FileNameModified = '"+fileNameModified+"', FilePathModified = '"+filePathModified+"', UpdateOriginal = '"+UpdateOriginal+"', UpdateModified = '"+UpdateModified+"'"
+			+ " WHERE FileNameOriginal ='"+fileNameModified+"'";
 		return sql;
 	}
 	
@@ -201,8 +239,13 @@ public class Database {
         stmt.execute();
         stmt.close();
 	}
-	public void closeDatabase() throws SQLException{
-		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM MegaFolder");
+	public void closeDatabase() throws IOException{
+		Path dest = Paths.get(IO.getUserDataDirectory() + File.separator + ".LockUpBackup" + File.separator + "LockUp.db.mv.db");
+		Path backup = Paths.get(IO.getUserDataDirectory() + File.separator + "LockUp" + File.separator + "LockUpDB" + File.separator + "LockUp.db.mv.db");
+		Files.copy(backup, dest, StandardCopyOption.REPLACE_EXISTING);
+	}
+	public void closeDatabase1() throws SQLException{
+		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Folders");
 		stmt.execute();
         ResultSet resultSet = stmt.getResultSet();
         ResultSetMetaData rsmd = resultSet.getMetaData();
@@ -221,7 +264,7 @@ public class Database {
 	public static void main(String[] args) throws SQLException, IOException, BackingStoreException, InvalidPreferencesFormatException{
 		Database db = new Database();
 		db.startDatabase();
-		db.closeDatabase();
+		db.closeDatabase1();
 		//db.selectAllFiles("MEGA");
 	}
 }

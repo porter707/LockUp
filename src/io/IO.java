@@ -11,6 +11,8 @@ public class IO {
 	public void initialSetup(){
 		File newFolder = new File(getUserDataDirectory() + File.separator + "LockUp");
 		newFolder.mkdir();
+		newFolder = new File(getUserDataDirectory() + File.separator + ".LockUpBackup");
+		newFolder.mkdir();
 		newFolder = new File(getUserDataDirectory() + File.separator + "LockUp" + File.separator + "Vault");
 		newFolder.mkdir();
 	}

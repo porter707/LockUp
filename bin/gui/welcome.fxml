@@ -11,19 +11,19 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.InitialLaunchController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" styleClass="background" stylesheets="@style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.InitialLaunchController">
    <children>
-      <Label layoutX="14.0" layoutY="32.0" text="Welcome to LockUp">
+      <Label id="title" layoutX="14.0" layoutY="32.0" text="Welcome to LockUp" textFill="WHITE">
          <font>
             <Font size="28.0" />
          </font>
       </Label>
-      <Label layoutX="15.0" layoutY="77.0" prefHeight="76.0" prefWidth="372.0" text="LockUp is a free and open source tool, designed to help you secure your personal data before it leaves your computer!" textOverrun="CLIP" wrapText="true">
+      <Label id="text" layoutX="15.0" layoutY="77.0" prefHeight="76.0" prefWidth="372.0" text="LockUp is a free and open source tool, designed to help you secure your personal data before it leaves your computer!" textFill="WHITE" textOverrun="CLIP" wrapText="true">
          <font>
             <Font size="14.0" />
          </font>
       </Label>
-      <Button fx:id="GetStarted" focusTraversable="false" layoutX="131.0" layoutY="297.0" mnemonicParsing="false" onAction="#sceneChange" prefHeight="47.0" prefWidth="116.0" text="Get Started!">
+      <Button id="button" fx:id="GetStarted" focusTraversable="false" layoutX="131.0" layoutY="297.0" mnemonicParsing="false" onAction="#sceneChange" prefHeight="47.0" prefWidth="116.0" stylesheets="@style.css" text="Get Started!">
          <font>
             <Font size="15.0" />
          </font>

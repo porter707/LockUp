@@ -90,7 +90,7 @@ public class folderWatch {
     				new folderWatch(file.getName().toString(),  file.toString(), table);
     			}else if (file.isFile() && !file.getName().toString().equals(".DS_Store")){
     				if(file.toString().contains(table + "Encrypted".replace("_", " "))){
-    					runSql(Database.addFileToTableModified(table, file.getName().toString(), file.toString(), false, true));
+    					runSql(Database.addFileToTableModified(table, file.getName().toString(), file.toString(), false, false));
     				} else {
     					runSql(Database.addFileToTable(table, file.getName().toString(), file.toString(), false, true));
     				}
