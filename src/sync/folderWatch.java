@@ -30,30 +30,38 @@ public class folderWatch {
                         	File file = new File(folderPath+"/"+filePath);
                         	if (file.isDirectory() && !watchedFolders.contains(folderPath+"/"+filePath)){
                         		new folderWatch(filePath, folderPath+"/"+filePath, table);
-                        	} else if (file.isFile() && !filePath.equals(".DS_Store")){
+                        	} else if (file.isFile() && !filePath.equals(".DS_Store") && !filePath.contains(".temp")){
                         		if(folderPath.contains(table + "Encrypted".replace("_", " "))){
                         			runSql(Database.addFileToTableModified(table, filePath, folderPath+"/"+filePath, false, false));
                         		}else{
                         			runSql(Database.addFileToTable(table, filePath, folderPath+"/"+filePath, false, true));
                         		}
                         	}
-                        	System.out.println("file added " + folderPath + "/" + filePath);
+                        	//System.out.println("file added " + folderPath + "/" + filePath);
                         }
                 
                         @Override
                         public void onFileModify(String filePath) {
                             // File modified
                         	File file = new File(folderPath+"/"+filePath);
+                        	System.out.println(LockUpEngine.getProcessing());
                         	if (file.isDirectory() && !watchedFolders.contains(folderPath+"/"+filePath)){
                         		new folderWatch(filePath, folderPath+"/"+filePath, table);
-                        	} else if (file.isFile()){
+                        	} else if (file.isFile() && !filePath.equals(".DS_Store") && !filePath.contains(".temp") && LockUpEngine.getProcessing() == false){
                         		if(folderPath.contains(table + "Encrypted".replace("_", " "))){
-                        			runSql(Database.updateFileFromTableModified(table, filePath));
+                        			if (getUpdate(Database.getUpdateModified(table, filePath)) != true){
+                        				runSql(Database.updateFileFromTable(table, filePath));
+                        				//System.out.println("file modded encrypted " + folderPath + "/" + filePath);
+                        				System.out.println("set org to true");
+                        			}
                         		}else{
-                        			runSql(Database.updateFileFromTable(table, filePath));
+                        			if (getUpdate(Database.getUpdateOriginal(table, filePath)) != true){
+                        				runSql(Database.updateFileFromTableModified(table, filePath));
+                        				//System.out.println("file modded " + folderPath + "/" + filePath);
+                        				System.out.println("set mod to true");
+                        			}
                         		}
                         	}
-                        	System.out.println("file modded " + folderPath + "/" + filePath);
                         }
                         
                         @Override
@@ -68,14 +76,13 @@ public class folderWatch {
                         		}
                         	}else{
                         		if(folderPath.contains(table + "Encrypted".replace("_", " "))){
-                        			
                         			runSql(Database.deleteFolderFromTableModified(table, folderPath + "/" + filePath));
                         		}else{
                         			runSql(Database.deleteFolderFromTable(table, filePath));
-                        			System.out.println(Database.deleteFolderFromTable(table, folderPath + "/" + filePath));
+                        			//System.out.println(Database.deleteFolderFromTable(table, folderPath + "/" + filePath));
                         		}
                         	}
-                        	System.out.println("deleted " + folderPath + "/" + filePath);
+                        	//System.out.println("deleted " + folderPath + "/" + filePath);
                         }
                     },
                     folderPath
@@ -88,7 +95,7 @@ public class folderWatch {
     		for (File file : files){
     			if (file.isDirectory()){
     				new folderWatch(file.getName().toString(),  file.toString(), table);
-    			}else if (file.isFile() && !file.getName().toString().equals(".DS_Store")){
+    			}else if (file.isFile() && !file.getName().toString().equals(".DS_Store") && !file.getName().toString().contains(".temp")){
     				if(file.toString().contains(table + "Encrypted".replace("_", " "))){
     					runSql(Database.addFileToTableModified(table, file.getName().toString(), file.toString(), false, false));
     				} else {
@@ -106,9 +113,21 @@ public class folderWatch {
 		try {
 			db.startDatabase();
 			db.runStatement(sql);
+			System.out.println(sql);
 		} catch (SQLException  | IOException  | BackingStoreException  | InvalidPreferencesFormatException e) {
 			e.printStackTrace();
 		}
-		
+	}
+	
+	public boolean getUpdate(String sql){
+		Database db = new Database();
+		Boolean update = null;
+		try {
+			db.startDatabase();
+			update = db.runStatementBool(sql);
+		} catch (SQLException  | IOException  | BackingStoreException  | InvalidPreferencesFormatException e) {
+			e.printStackTrace();
+		}
+		return update;
 	}
 }

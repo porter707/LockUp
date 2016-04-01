@@ -14,13 +14,11 @@
     -fx-font-family: helvetica, arial;
 }
 
+#text2{
+	-fx-text-fill: #00a4e5;
+}
+
 #button {
-    /*-fx-background-color: 
-        #373737;
-    
-    -fx-background-radius: 0,0,0,0;
-    -fx-padding: 12 20 12 20;
-    -fx-text-fill: white;*/
     -fx-font-size: 15px;
     -fx-font-family: helvetica, arial;
     -fx-background-insets: 0,0,0,0;
@@ -28,6 +26,7 @@
 #listView{
     /*-fx-background-color: #00a4e5;*/
 }
+
 .list-cell:filled:selected:focused, .list-cell:filled:selected {
     -fx-background-color: #00a4e5;
     -fx-text-fill: white;

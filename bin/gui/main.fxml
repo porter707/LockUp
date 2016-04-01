@@ -18,7 +18,7 @@
       <Button id="button" fx:id="AddFolder" focusTraversable="false" layoutX="14.0" layoutY="359.0" mnemonicParsing="false" onAction="#selectFolder" prefHeight="27.0" prefWidth="110.0" text="Add Folder" />
       <Button id="button" fx:id="RemoveFolder" focusTraversable="false" layoutX="138.0" layoutY="359.0" mnemonicParsing="false" onAction="#removeFolder" text="Remove Folder" />
       <Button id="button" fx:id="ChangeKey" focusTraversable="false" layoutX="276.0" layoutY="359.0" mnemonicParsing="false" onAction="#sceneChange" prefHeight="27.0" prefWidth="110.0" text="Change Key" />
-      <ProgressBar focusTraversable="false" layoutX="13.0" layoutY="324.0" prefHeight="20.0" prefWidth="372.0" progress="0.4" />
-      <Label id="text" alignment="CENTER" layoutX="116.0" layoutY="295.0" text="Processing File 1 of 20 . . ." />
+      <ProgressBar id="progressBar" fx:id="proBar" focusTraversable="false" layoutX="13.0" layoutY="324.0" prefHeight="20.0" prefWidth="372.0" progress="0.0" />
+      <Label id="text" fx:id="progress" alignment="CENTER" layoutX="116.0" layoutY="295.0" />
    </children>
 </Pane>

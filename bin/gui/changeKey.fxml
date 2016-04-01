@@ -13,6 +13,8 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" styleClass="background" stylesheets="@style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.Controller">
    <children>
+      <ProgressBar id="progressBar2" fx:id="proBar" focusTraversable="false" layoutX="15.0" layoutY="324.0" prefHeight="0" prefWidth="0" progress="0.0" />
+      <Label id="text2" fx:id="progress" alignment="CENTER" layoutX="116.0" layoutY="295.0" />
       <Label id="title" layoutX="14.0" layoutY="32.0" text="Change secure key!">
          <font>
             <Font size="28.0" />

@@ -15,6 +15,7 @@ import db.Database;
 import io.IO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -24,29 +25,34 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import sync.LockUpEngine;
 import sync.folderWatch;
 
 public class Controller implements Initializable{
 	
 	public Button AddFolder, RemoveFolder, ChangeKey, SetKey, GenerateKey, Back;
 	public TextField Key;
-	public Label KeyStatus;
+	public Label KeyStatus, progress;
+	public ProgressBar proBar;
 	public ObservableList<String> data;
 	public ListView<String> Folders = new ListView<String>();
 	public ListView<String> Files = new ListView<String>();
     public List<String> FoldersList, FilesList;
     public Database db;
     public boolean runOnce = false;
+    private Thread thread; 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		db = new Database();
 		try {
 			db.startDatabase();
 			setFolderView();
+			updateProgress();
 		    Folders.setOnMouseClicked(new EventHandler<MouseEvent>() {
 		        @Override
 		        public void handle(MouseEvent event) {
@@ -155,5 +161,36 @@ public class Controller implements Initializable{
 		}else{
 			Files.getItems().clear();
 		}
+	}
+	
+	public void updateProgress(){
+	    Task<Void> task = new Task<Void>() {
+	        @Override public Void call() {
+	          while (true) {
+	            try {
+	              Thread.sleep(3000);
+	            } catch (InterruptedException e) {
+	              e.printStackTrace();
+	            }
+	    		int file = LockUpEngine.getFile();
+	    		int total = LockUpEngine.getTotal();
+	    		if (file != 0 && total != 0){
+	    			updateMessage("Processing File "+file+" of "+total+" . . .");
+		            updateProgress(file, total);
+	    		}else{
+	    			updateMessage("LockUp is up to date");
+		            updateProgress(1, 1);
+	    		}
+	          }
+	        }
+	      };
+	      proBar.progressProperty().bind(task.progressProperty());
+	      progress.textProperty().bind(task.messageProperty());
+	      
+	      if (thread == null){
+	    	thread = new Thread(task);
+	      	thread.setDaemon(true);
+	      	thread.start();
+	      }
 	}
 }

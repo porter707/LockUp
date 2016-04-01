@@ -1,8 +1,6 @@
 package db;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -69,6 +67,17 @@ public class Database {
         return result;
 	}
 	
+	public String getKey() throws SQLException{
+		String key ="";
+		PreparedStatement stmt = conn.prepareStatement("SELECT secureKey FROM LockUpUser");
+        stmt.execute();
+        ResultSet resultSet = stmt.getResultSet();
+        while (resultSet.next()){
+        	key = resultSet.getString(1);
+        }
+        stmt.close();
+		return key;
+	}
 	public void createFolderTable() throws SQLException{
 		PreparedStatement stmt = conn.prepareStatement("CREATE TABLE IF NOT EXISTS Folders "
 				+ "(id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, "
@@ -180,7 +189,7 @@ public class Database {
         stmt.execute();
 	    ResultSet resultSet = stmt.getResultSet();
 	    while (resultSet.next()) {
-	    	if (!resultSet.getString(3).equals("false") || !resultSet.getString(4).equals("false")){
+	    	if (!resultSet.getString(3).equals("FALSE") || !resultSet.getString(4).equals("FALSE")){
 	    		files.add(resultSet.getString(1) + "," + resultSet.getString(2) + "," + resultSet.getString(3) + "," + resultSet.getString(4));
 	    	}
 	    }
@@ -193,7 +202,7 @@ public class Database {
 			+ " (id, FileNameOriginal, FilePathOriginal, UpdateOriginal, UpdateModified) "
 			+ "VALUES (NULL, '"+fileNameOriginal+"', '"+filePathOriginal+"', '"+UpdateOriginal+"', '"+UpdateModified+"') "
 			+ "ON DUPLICATE KEY UPDATE "
-			+ "FileNameOriginal = '"+fileNameOriginal+"', FilePathOriginal = '"+filePathOriginal+"', UpdateOriginal = '"+UpdateOriginal+"', UpdateModified = '"+UpdateModified+"'";	
+			+ "FileNameOriginal = '"+fileNameOriginal+"', FilePathOriginal = '"+filePathOriginal+"'";	
 		return sql;
 	}
 	
@@ -211,6 +220,16 @@ public class Database {
 	
 	public static String updateFileFromTableModified(String table, String file){
 		String sql = "UPDATE " + table + "Folder SET UpdateModified = 'true' WHERE FileNameModified = '"+ file +"'";
+		return sql;
+	}
+	
+	public static String setFalseOriginal(String table, String file){
+		String sql = "UPDATE " + table + "Folder SET UpdateOriginal = 'false' WHERE FileNameOriginal = '"+ file +"'";
+		return sql;
+	}
+	
+	public static String setFalseModified(String table, String file){
+		String sql = "UPDATE " + table + "Folder SET UpdateModified = 'false' WHERE FileNameModified = '"+ file +"'";
 		return sql;
 	}
 	
@@ -234,10 +253,31 @@ public class Database {
 		return sql;
 	}
 	
+	public static String getUpdateOriginal(String table, String file){
+		String sql ="SELECT UpdateOriginal FROM " + table + "Folder WHERE fileNameOriginal = '" + file + "'";
+		return sql;
+	}
+	
+	public static String getUpdateModified(String table, String file){
+		String sql ="SELECT UpdateModified FROM " + table + "Folder WHERE fileNameModified = '" + file + "'";
+		return sql;
+	}
 	public void runStatement(String sql) throws SQLException{
 		PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.execute();
         stmt.close();
+	}
+	
+	public boolean runStatementBool(String sql) throws SQLException{
+		Boolean update = false;
+		PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.execute();
+	    ResultSet resultSet = stmt.getResultSet();
+	    while (resultSet.next()) {
+	    	update = resultSet.getBoolean(1);
+	    }
+        stmt.close();
+        return update;
 	}
 	public void closeDatabase() throws IOException{
 		Path dest = Paths.get(IO.getUserDataDirectory() + File.separator + ".LockUpBackup" + File.separator + "LockUp.db.mv.db");
@@ -245,7 +285,7 @@ public class Database {
 		Files.copy(backup, dest, StandardCopyOption.REPLACE_EXISTING);
 	}
 	public void closeDatabase1() throws SQLException{
-		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Folders");
+		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM MegaFolder");
 		stmt.execute();
         ResultSet resultSet = stmt.getResultSet();
         ResultSetMetaData rsmd = resultSet.getMetaData();
