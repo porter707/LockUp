@@ -80,6 +80,7 @@ public class Controller implements Initializable{
 			if (SetKey() == true){
 				stage = (Stage) SetKey.getScene().getWindow();
 				root = FXMLLoader.load(getClass().getResource("main.fxml"));
+				LockUpEngine.setUpdateKey(true);
 			}else{
 				success = false;
 				KeyStatus.setText("Key doesn't meet the requirements");

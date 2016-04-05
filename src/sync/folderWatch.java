@@ -44,7 +44,7 @@ public class folderWatch {
                         public void onFileModify(String filePath) {
                             // File modified
                         	File file = new File(folderPath+"/"+filePath);
-                        	System.out.println(LockUpEngine.getProcessing());
+//                        	System.out.println(LockUpEngine.getProcessing());
                         	if (file.isDirectory() && !watchedFolders.contains(folderPath+"/"+filePath)){
                         		new folderWatch(filePath, folderPath+"/"+filePath, table);
                         	} else if (file.isFile() && !filePath.equals(".DS_Store") && !filePath.contains(".temp") && LockUpEngine.getProcessing() == false){

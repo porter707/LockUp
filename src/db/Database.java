@@ -166,6 +166,12 @@ public class Database {
         stmt.close();
 	}
 	
+	public void keyChangeUpdateFiles(String folder) throws SQLException{
+		PreparedStatement stmt = conn.prepareStatement("UPDATE " + folder + "Folder SET UpdateModified = TRUE");
+		stmt.execute();
+		stmt.close();
+	}
+	
 	public List<String> selectAllFiles(String folder) throws SQLException{
 		List<String> folders = new ArrayList<String>();
 		PreparedStatement stmt = conn.prepareStatement("SELECT FileNameOriginal FROM " + folder + "Folder");
@@ -186,6 +192,20 @@ public class Database {
 	public List<String> selectFiles(String folder) throws SQLException{
 		List<String> files = new ArrayList<String>();
 		PreparedStatement stmt = conn.prepareStatement("SELECT FilePathOriginal, FilePathModified, UpdateOriginal, UpdateModified FROM " + folder + "Folder");
+        stmt.execute();
+	    ResultSet resultSet = stmt.getResultSet();
+	    while (resultSet.next()) {
+	    	if (!resultSet.getString(3).equals("FALSE") || !resultSet.getString(4).equals("FALSE")){
+	    		files.add(resultSet.getString(1) + "," + resultSet.getString(2) + "," + resultSet.getString(3) + "," + resultSet.getString(4));
+	    	}
+	    }
+	    stmt.close();
+		return files;
+	}
+	
+	public List<String> selectFilesUpdateOriginal(String folder) throws SQLException{
+		List<String> files = new ArrayList<String>();
+		PreparedStatement stmt = conn.prepareStatement("SELECT FilePathOriginal, FilePathModified, UpdateOriginal, UpdateModified FROM " + folder + "Folder WHERE UpdateOriginal = 'TRUE'");
         stmt.execute();
 	    ResultSet resultSet = stmt.getResultSet();
 	    while (resultSet.next()) {
@@ -223,14 +243,16 @@ public class Database {
 		return sql;
 	}
 	
-	public static String setFalseOriginal(String table, String file){
-		String sql = "UPDATE " + table + "Folder SET UpdateOriginal = 'false' WHERE FileNameOriginal = '"+ file +"'";
-		return sql;
+	public void setFalseOriginal(String table, String file) throws SQLException{
+		PreparedStatement stmt = conn.prepareStatement("UPDATE " + table + "Folder SET UpdateOriginal = 'false' WHERE FilePathModified  = '"+ file +"'");
+		stmt.execute();
+		stmt.close();
 	}
 	
-	public static String setFalseModified(String table, String file){
-		String sql = "UPDATE " + table + "Folder SET UpdateModified = 'false' WHERE FileNameModified = '"+ file +"'";
-		return sql;
+	public void setFalseModified(String table, String file) throws SQLException{
+		PreparedStatement stmt = conn.prepareStatement("UPDATE " + table + "Folder SET UpdateModified = 'false' WHERE FilePathOriginal = '"+ file +"'");
+		stmt.execute();
+		stmt.close();
 	}
 	
 	public static String deleteFileFromTable(String table, String file){
@@ -262,6 +284,7 @@ public class Database {
 		String sql ="SELECT UpdateModified FROM " + table + "Folder WHERE fileNameModified = '" + file + "'";
 		return sql;
 	}
+	
 	public void runStatement(String sql) throws SQLException{
 		PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.execute();
