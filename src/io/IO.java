@@ -4,9 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class IO {
-    public static void main(String args[]){
-    	System.out.println(getLockUpDirectory());
-    }
     
 	public void initialSetup(){
 		File newFolder = new File(getUserDataDirectory() + File.separator + "LockUp");
@@ -31,7 +28,6 @@ public class IO {
 		}
 		File newFolder = new File(path + File.separator + folder);
 		boolean success = newFolder.mkdir();
-		System.out.println(success);
 		if (!success){
 			System.err.println("Failed to create " + folder + " folder");
 		}

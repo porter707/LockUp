@@ -44,7 +44,6 @@ public class Controller implements Initializable{
 	public ListView<String> Files = new ListView<String>();
     public List<String> FoldersList, FilesList;
     public Database db;
-    public boolean runOnce = false;
     private Thread thread; 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {

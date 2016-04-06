@@ -30,9 +30,12 @@ public class Database {
 		LockUpPreferences pref = new LockUpPreferences();
 		File file = new File(IO.getUserDataDirectory() + File.separator + "LockUp" + File.separator + "LockUpDB" + File.separator + "LockUp.db.mv.db");
 		if(!file.exists()){
-			Path backup = Paths.get(IO.getUserDataDirectory() + File.separator + ".LockUpBackup" + File.separator + "LockUp.db.mv.db");
-			Path dest = Paths.get(IO.getUserDataDirectory() + File.separator + "LockUp" + File.separator + "LockUpDB" + File.separator + "LockUp.db.mv.db");
-			Files.copy(backup, dest);
+			File file2 = new File(IO.getUserDataDirectory() + File.separator + ".LockUpBackup" + File.separator + "LockUp.db.mv.db");
+			if (file2.exists()){
+				Path backup = Paths.get(IO.getUserDataDirectory() + File.separator + ".LockUpBackup" + File.separator + "LockUp.db.mv.db");
+				Path dest = Paths.get(IO.getUserDataDirectory() + File.separator + "LockUp" + File.separator + "LockUpDB" + File.separator + "LockUp.db.mv.db");
+				Files.copy(backup, dest);
+			}
 		}
 		ds.setURL("jdbc:h2:~/LockUp/LockUpDB/LockUp.db;mode=MySQL");
 		ds.setUser(pref.getUsername());
@@ -306,28 +309,5 @@ public class Database {
 		Path dest = Paths.get(IO.getUserDataDirectory() + File.separator + ".LockUpBackup" + File.separator + "LockUp.db.mv.db");
 		Path backup = Paths.get(IO.getUserDataDirectory() + File.separator + "LockUp" + File.separator + "LockUpDB" + File.separator + "LockUp.db.mv.db");
 		Files.copy(backup, dest, StandardCopyOption.REPLACE_EXISTING);
-	}
-	public void closeDatabase1() throws SQLException{
-		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM MegaFolder");
-		stmt.execute();
-        ResultSet resultSet = stmt.getResultSet();
-        ResultSetMetaData rsmd = resultSet.getMetaData();
-        int columnsNumber = rsmd.getColumnCount();
-        while (resultSet.next()) {
-            for (int i = 1; i <= columnsNumber; i++) {
-                if (i > 1) System.out.print(",  ");
-                String columnValue = resultSet.getString(i);
-                System.out.print(columnValue + " " + rsmd.getColumnName(i));
-            }
-            System.out.println("");
-        }
-        stmt.close();
-	}
-	
-	public static void main(String[] args) throws SQLException, IOException, BackingStoreException, InvalidPreferencesFormatException{
-		Database db = new Database();
-		db.startDatabase();
-		db.closeDatabase1();
-		//db.selectAllFiles("MEGA");
 	}
 }

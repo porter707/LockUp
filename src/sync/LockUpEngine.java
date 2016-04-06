@@ -154,7 +154,6 @@ public class LockUpEngine implements Runnable{
 
             AESCipher.InitCiphers();
  
-            //encryption
             AESCipher.CBCEncrypt(fis, fos);
  
         } catch (ShortBufferException ex) {

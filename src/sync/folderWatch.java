@@ -37,28 +37,22 @@ public class folderWatch {
                         			runSql(Database.addFileToTable(table, filePath, folderPath+"/"+filePath, false, true));
                         		}
                         	}
-                        	//System.out.println("file added " + folderPath + "/" + filePath);
                         }
                 
                         @Override
                         public void onFileModify(String filePath) {
                             // File modified
                         	File file = new File(folderPath+"/"+filePath);
-//                        	System.out.println(LockUpEngine.getProcessing());
                         	if (file.isDirectory() && !watchedFolders.contains(folderPath+"/"+filePath)){
                         		new folderWatch(filePath, folderPath+"/"+filePath, table);
                         	} else if (file.isFile() && !filePath.equals(".DS_Store") && !filePath.contains(".temp") && LockUpEngine.getProcessing() == false){
                         		if(folderPath.contains(table + "Encrypted".replace("_", " "))){
                         			if (getUpdate(Database.getUpdateModified(table, filePath)) != true){
                         				runSql(Database.updateFileFromTable(table, filePath));
-                        				//System.out.println("file modded encrypted " + folderPath + "/" + filePath);
-                        				System.out.println("set org to true");
                         			}
                         		}else{
                         			if (getUpdate(Database.getUpdateOriginal(table, filePath)) != true){
                         				runSql(Database.updateFileFromTableModified(table, filePath));
-                        				//System.out.println("file modded " + folderPath + "/" + filePath);
-                        				System.out.println("set mod to true");
                         			}
                         		}
                         	}
@@ -66,6 +60,7 @@ public class folderWatch {
                         
                         @Override
                         public void onFileDelete(String filePath) {
+                            // File deleted
                         	Pattern pattern = Pattern.compile("(\\.[^.]+)$");
                         	Matcher matcher = pattern.matcher(filePath);
                         	if (matcher.find()){
@@ -79,10 +74,8 @@ public class folderWatch {
                         			runSql(Database.deleteFolderFromTableModified(table, folderPath + "/" + filePath));
                         		}else{
                         			runSql(Database.deleteFolderFromTable(table, filePath));
-                        			//System.out.println(Database.deleteFolderFromTable(table, folderPath + "/" + filePath));
                         		}
                         	}
-                        	//System.out.println("deleted " + folderPath + "/" + filePath);
                         }
                     },
                     folderPath
@@ -113,7 +106,6 @@ public class folderWatch {
 		try {
 			db.startDatabase();
 			db.runStatement(sql);
-			System.out.println(sql);
 		} catch (SQLException  | IOException  | BackingStoreException  | InvalidPreferencesFormatException e) {
 			e.printStackTrace();
 		}

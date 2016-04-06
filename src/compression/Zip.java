@@ -37,7 +37,8 @@ public class Zip {
             String outFilename = filename;
             ZipInputStream in = new ZipInputStream(new FileInputStream(zipfile));
             FileOutputStream out = new FileOutputStream(outFilename);
-            ZipEntry entry = null;
+            @SuppressWarnings("unused")
+			ZipEntry entry = null;
             while ((entry = in.getNextEntry()) != null){
             	int len;
             	while((len = in.read(buf)) > 0){

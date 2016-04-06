@@ -19,10 +19,10 @@ import preferences.LockUpPreferences;
 import sync.LockUpEngine;
 import sync.folderWatch;
 
-public class Main extends Application {
+public class LockUp extends Application {
 
     public static void main(String[] args) {
-        Application.launch(Main.class, (java.lang.String[])null);
+        Application.launch(LockUp.class, (java.lang.String[])null);
     }
 
     @Override
@@ -35,9 +35,9 @@ public class Main extends Application {
         	LockUpPreferences pref = new LockUpPreferences();
         	Boolean firstLaunch = pref.getFirstLaunch();
         	if (firstLaunch == true){
-        		page = FXMLLoader.load(Main.class.getResource("welcome.fxml"));
+        		page = FXMLLoader.load(LockUp.class.getResource("welcome.fxml"));
         	}else{
-        		page = FXMLLoader.load(Main.class.getResource("main.fxml"));
+        		page = FXMLLoader.load(LockUp.class.getResource("main.fxml"));
         	}
             Scene scene = new Scene(page);
             scene.getStylesheets().add("/gui/style.css");
@@ -71,7 +71,7 @@ public class Main extends Application {
                 }
              });
         } catch (Exception e) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(LockUp.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 }
