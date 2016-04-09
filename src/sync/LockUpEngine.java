@@ -20,6 +20,7 @@ import org.bouncycastle.crypto.DataLengthException;
 
 import cipher.AES;
 import compression.Zip;
+import csp.SecurePassword;
 import db.Database;
 
 public class LockUpEngine implements Runnable{
@@ -30,6 +31,7 @@ public class LockUpEngine implements Runnable{
 	private ArrayList<String> userFolders = new ArrayList<String>();
 	private ArrayList<String> files = new ArrayList<String>();
 	private String key;
+	byte[] IV;
 	private static int file = 0;
 	private static int total = 0;
 	private static boolean processing = false;
@@ -64,10 +66,23 @@ public class LockUpEngine implements Runnable{
 						setTotal(files.size());
 						if (parts[2].equals("FALSE") && updateKey == false){
 							String[] path = parts[0].split("/LockUp/Vault/" + lockUpFolders.get(i));
+							String stringIV = db.getIV(lockUpFolders.get(i), parts[0], true);
+							System.out.println(lockUpFolders.get(i));
+							System.out.println(parts[0]);
+							if (stringIV == null){
+								db.setIV(lockUpFolders.get(i), parts[0], SecurePassword.SecureRandomAlphaNumericString().substring(0, 16), true);
+								stringIV = db.getIV(lockUpFolders.get(i), parts[0], true);
+								System.out.println(stringIV);
+								IV = stringIV.getBytes();
+							}else{
+								IV = stringIV.getBytes();
+							}
 							transform(parts[0], userFolders.get(i) + path[1], true);
 							db.setFalseModified(lockUpFolders.get(i), parts[0]);
 						}else if (parts[3].equals("FALSE")){
 							transform(parts[1], parts[0], false);
+							String stringIV = db.getIV(lockUpFolders.get(i), parts[1], false);
+							IV = stringIV.getBytes();
 							db.setFalseOriginal(lockUpFolders.get(i), parts[1]);
 						}
 					}
@@ -150,7 +165,7 @@ public class LockUpEngine implements Runnable{
             FileOutputStream fos =
                     new FileOutputStream(new File(fileDestination));
  
-            AES AESCipher = new AES(key);
+            AES AESCipher = new AES(key, IV);
 
             AESCipher.InitCiphers();
  
@@ -177,7 +192,7 @@ public class LockUpEngine implements Runnable{
             FileOutputStream fos =
                     new FileOutputStream(new File(fileDestination));
  
-            AES AESCipher = new AES(key);
+            AES AESCipher = new AES(key, IV);
 
             AESCipher.InitCiphers();
  

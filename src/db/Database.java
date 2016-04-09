@@ -163,7 +163,8 @@ public class Database {
 				+ "FileNameModified VARCHAR(255),"
 				+ "FilePathModified VARCHAR(255),"
 				+ "UpdateOriginal BOOLEAN,"
-				+ "UpdateModified BOOLEAN)"
+				+ "UpdateModified BOOLEAN,"
+				+ "IV VARCHAR(16) UNIQUE)"
 				);
         stmt.execute();
         stmt.close();
@@ -173,6 +174,29 @@ public class Database {
 		PreparedStatement stmt = conn.prepareStatement("UPDATE " + folder + "Folder SET UpdateModified = TRUE");
 		stmt.execute();
 		stmt.close();
+	}
+	
+	public String getIV(String folder, String filePath, boolean original) throws SQLException{
+		String IV = null;
+		PreparedStatement stmt = null;
+		if (original == true){
+			stmt = conn.prepareStatement("SELECT IV FROM " + folder + "Folder WHERE FilePathOriginal = '"+filePath+"'");
+		} else {
+			stmt = conn.prepareStatement("SELECT IV FROM " + folder + "Folder WHERE FilePathModified = '"+filePath+"'");
+		}
+		stmt.execute();
+		ResultSet resultSet = stmt.getResultSet();
+	    while (resultSet.next()) {
+	    	IV = resultSet.getString(1);
+	    }
+        stmt.close();
+        return IV;
+	}
+	
+	public void setIV(String folder, String filePath, String IV, boolean original) throws SQLException{
+		PreparedStatement stmt = conn.prepareStatement("UPDATE " + folder + "Folder SET IV = '"+IV+"' WHERE FilePathOriginal = '"+filePath+"'");
+		stmt.execute();
+        stmt.close();
 	}
 	
 	public List<String> selectAllFiles(String folder) throws SQLException{
@@ -311,3 +335,4 @@ public class Database {
 		Files.copy(backup, dest, StandardCopyOption.REPLACE_EXISTING);
 	}
 }
+
