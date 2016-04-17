@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -35,7 +36,7 @@ import sync.folderWatch;
 
 public class Controller implements Initializable{
 	
-	public Button AddFolder, RemoveFolder, ChangeKey, SetKey, GenerateKey, Back;
+	public Button AddFolder, RemoveFolder, ChangeKey, SetKey, GenerateKey, Back, Vault;
 	public TextField Key;
 	public Label KeyStatus, progress;
 	public ProgressBar proBar;
@@ -94,10 +95,18 @@ public class Controller implements Initializable{
 			stage.show();
 		}
 	}
+	
+	public void openVault() throws IOException{
+		File file = new File (IO.getLockUpDirectory());
+		Desktop desktop = Desktop.getDesktop();
+		desktop.open(file);
+	}
+	
 	public void generateKey(){
 		String password = SecurePassword.SecureRandomAlphaNumericString();
 		Key.setText(password);
 	}
+	
 	public boolean SetKey() throws SQLException{
 		if (Key.getText().length() == 32){
 			db.updateUserTable(Key.getText());

@@ -1,5 +1,6 @@
 .background{
-    -fx-background-color: #00a4e5;
+    /*-fx-background-color: #00a4e5;*/
+    -fx-background-color: #03C3E2;
 }
 
 #title {
@@ -15,7 +16,11 @@
 }
 
 #text2{
-	-fx-text-fill: #00a4e5;
+	-fx-text-fill: #03C3E2;
+}
+
+#progressBar{
+	-fx-accent: #262729; 	
 }
 
 #button {
@@ -28,7 +33,7 @@
 }
 
 .list-cell:filled:selected:focused, .list-cell:filled:selected {
-    -fx-background-color: #00a4e5;
+    -fx-background-color: #03C3E2;
     -fx-text-fill: white;
 }
 

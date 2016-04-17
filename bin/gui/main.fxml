@@ -15,10 +15,24 @@
    <children>
       <ListView id="listView" fx:id="Folders" focusTraversable="false" prefHeight="283.0" prefWidth="200.0" />
       <ListView id="listView" fx:id="Files" focusTraversable="false" layoutX="200.0" prefHeight="283.0" prefWidth="200.0" />
-      <Button id="button" fx:id="AddFolder" focusTraversable="false" layoutX="14.0" layoutY="359.0" mnemonicParsing="false" onAction="#selectFolder" prefHeight="27.0" prefWidth="110.0" text="Add Folder" />
-      <Button id="button" fx:id="RemoveFolder" focusTraversable="false" layoutX="138.0" layoutY="359.0" mnemonicParsing="false" onAction="#removeFolder" text="Remove Folder" />
-      <Button id="button" fx:id="ChangeKey" focusTraversable="false" layoutX="276.0" layoutY="359.0" mnemonicParsing="false" onAction="#sceneChange" prefHeight="27.0" prefWidth="110.0" text="Change Key" />
+      <Button id="button" fx:id="AddFolder" focusTraversable="false" layoutX="14.0" layoutY="359.0" mnemonicParsing="false" onAction="#selectFolder" prefHeight="29.0" prefWidth="69.0" text="Add">
+         <tooltip>
+            <Tooltip text="Add new Folders" />
+         </tooltip></Button>
+      <Button id="button" fx:id="RemoveFolder" focusTraversable="false" layoutX="100.0" layoutY="359.0" mnemonicParsing="false" onAction="#removeFolder" text="Remove">
+         <tooltip>
+            <Tooltip text="Select the folder you want to remove" />
+         </tooltip></Button>
+      <Button id="button" fx:id="ChangeKey" focusTraversable="false" layoutX="275.0" layoutY="359.0" mnemonicParsing="false" onAction="#sceneChange" prefHeight="27.0" prefWidth="110.0" text="Change Key">
+         <tooltip>
+            <Tooltip text="Change your secure key" />
+         </tooltip></Button>
       <ProgressBar id="progressBar" fx:id="proBar" focusTraversable="false" layoutX="13.0" layoutY="324.0" prefHeight="20.0" prefWidth="372.0" progress="0.0" />
       <Label id="text" fx:id="progress" alignment="CENTER" layoutX="116.0" layoutY="295.0" />
+      <Button id="button" fx:id="Vault" layoutX="200.0" layoutY="359.0" mnemonicParsing="false" onAction="#openVault" text="Vault">
+         <tooltip>
+            <Tooltip text="Open the Vault to view files" />
+         </tooltip>
+      </Button>
    </children>
 </Pane>

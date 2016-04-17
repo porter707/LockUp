@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.shape.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" styleClass="background" stylesheets="@style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.InitialLaunchController">
+   <children>
+      <Label id="title" layoutX="14.0" layoutY="32.0" text="One more thing!">
+         <font>
+            <Font size="28.0" />
+         </font>
+      </Label>
+      <Label id="text" layoutX="15.0" layoutY="76.0" prefHeight="54.0" prefWidth="372.0" text="For LockUp to secure your files you should no longer place your files in your online storage folders. Instead you should place them inside the LockUp Vault." textOverrun="CLIP" wrapText="true">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Button id="button" fx:id="Finish" focusTraversable="false" layoutX="142.0" layoutY="304.0" mnemonicParsing="false" onAction="#sceneChange" prefHeight="47.0" prefWidth="116.0" text="Finish!">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Button>
+      <Label id="text" layoutX="15.0" layoutY="146.0" prefHeight="54.0" prefWidth="372.0" text="Then relax as LockUp will then take care of the rest and ensure your files get secured and to the online storage folders they belong to." textOverrun="CLIP" wrapText="true">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label id="text" layoutX="15.0" layoutY="210.0" prefHeight="54.0" prefWidth="372.0" text="The Vault is easy to find! just click the Vault button on the next page." textOverrun="CLIP" wrapText="true">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+   </children>
+</Pane>

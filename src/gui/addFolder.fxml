@@ -23,7 +23,7 @@
             <Font size="14.0" />
          </font>
       </Label>
-      <Button id="button" fx:id="Finish" focusTraversable="false" layoutX="271.0" layoutY="304.0" mnemonicParsing="false" onAction="#sceneChange" prefHeight="47.0" prefWidth="116.0" text="Finish!">
+      <Button id="button" fx:id="Next" focusTraversable="false" layoutX="271.0" layoutY="304.0" mnemonicParsing="false" onAction="#sceneChange" prefHeight="47.0" prefWidth="116.0" text="Next">
          <font>
             <Font size="15.0" />
          </font>

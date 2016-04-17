@@ -60,19 +60,15 @@ public class LockUpEngine implements Runnable{
 				for (int i = 0; i < lockUpFolders.size(); i++){
 					getFiles(lockUpFolders.get(i));
 					for (int j = 0; j < files.size(); j ++){
-						System.out.println(files.get(j));
 						String[] parts = files.get(j).split(",");
 						setFile(j +1);
 						setTotal(files.size());
 						if (parts[2].equals("FALSE") && updateKey == false){
 							String[] path = parts[0].split("/LockUp/Vault/" + lockUpFolders.get(i));
 							String stringIV = db.getIV(lockUpFolders.get(i), parts[0], true);
-							System.out.println(lockUpFolders.get(i));
-							System.out.println(parts[0]);
 							if (stringIV == null){
 								db.setIV(lockUpFolders.get(i), parts[0], SecurePassword.SecureRandomAlphaNumericString().substring(0, 16), true);
 								stringIV = db.getIV(lockUpFolders.get(i), parts[0], true);
-								System.out.println(stringIV);
 								IV = stringIV.getBytes();
 							}else{
 								IV = stringIV.getBytes();
@@ -141,11 +137,15 @@ public class LockUpEngine implements Runnable{
 	}
 	public void transform(String file, String fileDestination, boolean encrypt){
 		if (encrypt == true){
+			File fd = new File(fileDestination);
+			fd.getParentFile().mkdirs();
 			compression(file, file + ".temp");
 			encryption(file + ".temp", fileDestination);
 			File temp = new File(file + ".temp");
 			temp.delete();
 		}else{
+			File fd = new File(fileDestination);
+			fd.getParentFile().mkdirs();
 			decryption(file, file + ".temp");
 			decompression(file + ".temp", fileDestination);
 			File temp = new File(file + ".temp");

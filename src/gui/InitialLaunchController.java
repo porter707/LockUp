@@ -22,10 +22,11 @@ import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import preferences.LockUpPreferences;
+import sync.folderWatch;
 
 public class InitialLaunchController implements Initializable{
 	
-	public Button GetStarted, SetKey, GenerateKey, AddFolder, Finish, KeyBack, FolderBack;
+	public Button GetStarted, SetKey, GenerateKey, AddFolder, Next, Finish, KeyBack, FolderBack;
 	public TextField Key;
 	public Label KeyStatus, folderAdded;
 	public Database db;
@@ -60,6 +61,9 @@ public class InitialLaunchController implements Initializable{
 				success = false;
 				KeyStatus.setText("Key doesn't meet the requirements");
 			}
+		}else if (event.getSource() == Next){
+			stage = (Stage) Next.getScene().getWindow();
+			root = FXMLLoader.load(getClass().getResource("information.fxml"));
 		}else if (event.getSource() == Finish){
 			LockUpPreferences pref = new LockUpPreferences();
 			pref.setFirstLaunch(false);
@@ -98,8 +102,8 @@ public class InitialLaunchController implements Initializable{
 			return false;
 		}
 	}
-	
-	public void selectFolder(ActionEvent event) throws IOException, SQLException{
+
+	public void selectFolder(ActionEvent event) throws SQLException{
 		folderAdded.setText(" ");
 		Stage stage = (Stage) AddFolder.getScene().getWindow();
 		DirectoryChooser chooser = new DirectoryChooser();
@@ -107,13 +111,16 @@ public class InitialLaunchController implements Initializable{
 		chooser.setInitialDirectory(defaultDirectory);
 		File selectedDirectory = chooser.showDialog(stage);
 		if (selectedDirectory != null){
-			boolean success = db.addFolderToTable(selectedDirectory.getName() + "Encrypted", 
-					selectedDirectory.getAbsolutePath(),
-					selectedDirectory.getName(),
-					IO.getLockUpDirectory() + selectedDirectory.getName());
+			String folderName = selectedDirectory.getName() + "Encrypted";
+			String folderPath = selectedDirectory.getAbsolutePath() + "/" + selectedDirectory.getName() +"Encrypted";
+			String lockupName = selectedDirectory.getName();
+			String lockupPath = IO.getLockUpDirectory() + selectedDirectory.getName();
+			boolean success = db.addFolderToTable(folderName, folderPath, lockupName, lockupPath);
 			if (success == true){
 				IO.newFolder(selectedDirectory.getName(), null);
 				IO.newFolder(selectedDirectory.getName() + "Encrypted", selectedDirectory.getAbsolutePath());
+				new folderWatch(folderName, folderPath, lockupName);
+				new folderWatch(lockupName, lockupPath, lockupName);
 			}
 		}
 	}

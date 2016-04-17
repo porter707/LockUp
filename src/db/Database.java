@@ -32,6 +32,7 @@ public class Database {
 		if(!file.exists()){
 			File file2 = new File(IO.getUserDataDirectory() + File.separator + ".LockUpBackup" + File.separator + "LockUp.db.mv.db");
 			if (file2.exists()){
+				file.getParentFile().mkdirs();
 				Path backup = Paths.get(IO.getUserDataDirectory() + File.separator + ".LockUpBackup" + File.separator + "LockUp.db.mv.db");
 				Path dest = Paths.get(IO.getUserDataDirectory() + File.separator + "LockUp" + File.separator + "LockUpDB" + File.separator + "LockUp.db.mv.db");
 				Files.copy(backup, dest);

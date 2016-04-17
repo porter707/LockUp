@@ -90,9 +90,6 @@ public class AES {
 		    // Read in the cleartext bytes from in InputStream and
 		    //      write them encrypted to out OutputStream
 	
-		    //optionaly put the IV at the beggining of the cipher file
-		    //out.write(IV, 0, IV.length);
-	
 		    int noBytesRead = 0;        //number of bytes read from input
 		    int noBytesProcessed = 0;   //number of bytes processed
 	
@@ -121,11 +118,6 @@ public class AES {
 	        // Bytes read from in will be decrypted
 	        // Read in the decrypted bytes from in InputStream and and
 	        //      write them in cleartext to out OutputStream
-	
-	        // get the IV from the file
-	        // DO NOT FORGET TO reinit the cipher with the IV
-	        //in.read(IV,0,IV.length);
-	        //this.InitCiphers();
 	
 	        int noBytesRead = 0;        //number of bytes read from input
 	        int noBytesProcessed = 0;   //number of bytes processed
